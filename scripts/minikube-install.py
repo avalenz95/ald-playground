@@ -13,7 +13,8 @@ UNI_OUT = "\033[92m\u2714\033[0m"
 
 def download_minikube():
     # TODO: look into subprocess/curl functionality. this fails to error when passed with invalid data
-    cmd = [f"curl -LO https://storage.googleapis.com/minikube/releases/latest/{APP_NAME}-{OS_TYPE}-{ARCH_TYPE}"]
+    # TODO: look into perms for dir creation
+    cmd = [f"curl --create-dirs --output-dir {INSTALL_DIR}/{APP_NAME} -LO https://storage.googleapis.com/minikube/releases/latest/{APP_NAME}-{OS_TYPE}-{ARCH_TYPE}"]
     sp = subprocess.run(cmd, shell=True)
 
     if sp.returncode == 0:
@@ -22,19 +23,19 @@ def download_minikube():
         print(f"{UNI_ERR} error pulling binary: {sp.stderr}")
         return sp.stderr
 
-def create_install_dir(directory):
-    try:
-        os.makedirs(directory)
-        print(f"{UNI_OUT} directory created at {directory}")
-        return True, None
+# def create_install_dir(directory):
+#     try:
+#         os.makedirs(directory)
+#         print(f"{UNI_OUT} directory created at {directory}")
+#         return True, None
     
-    except FileExistsError as err:
-        print(f"directory already exists at {directory} procceeding...")
-        return True, err.strerror
+#     except FileExistsError as err:
+#         print(f"directory already exists at {directory} procceeding...")
+#         return True, err.strerror
     
-    except OSError as err:
-        print(f"{UNI_ERR} failed creating directory at {directory} error: {err.strerror}")
-        return False, err.strerror
+#     except OSError as err:
+#         print(f"{UNI_ERR} failed creating directory at {directory} error: {err.strerror}")
+#         return False, err.strerror
     
 def install_minikube():
 
@@ -60,8 +61,8 @@ def check_install():
 
 
 if __name__ == "__main__":
-    create_install_dir(f"{INSTALL_DIR}/{APP_NAME}")
-    #download_minikube()
+    #create_install_dir(f"{INSTALL_DIR}/{APP_NAME}")
+    download_minikube()
     #install_minikube()
     #check_install()
 
