@@ -19,9 +19,10 @@ def download_minikube():
 
     if sp.returncode == 0:
         print(f"{UNI_OUT} pulled {APP_NAME}-{OS_TYPE}-{ARCH_TYPE} binary")
+        return True, sp.stdout.decode()
     else:
         print(f"{UNI_ERR} error pulling binary: {sp.stderr}")
-        return sp.stderr
+        return False, sp.stderr.decode()
 
 # def create_install_dir(directory):
 #     try:
