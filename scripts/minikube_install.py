@@ -42,21 +42,25 @@ def download_minikube():
 #         return False, err.strerror
     
 def install_minikube():
-
+    print(f"Installing {APP_NAME}...")
     cmd = [f"sudo install {INSTALL_DIR}/{APP_NAME}-{OS_TYPE}-{ARCH_TYPE} {INSTALL_DIR}/{APP_NAME}"]
     sp = subprocess.run(cmd, shell=True)
-    #TODO:Turn binary to executable, move to INSTALL_DIR, verify directory exists, create if not
-    #TODO:configure install/curl to specify version/platform
-    #print(sp.stderr)
+
+    if sp.returncode == 0:
+        print(f"{UNI_OUT} Installed {APP_NAME} to {INSTALL_DIR}")
+        return True, sp.stdout
+    else:
+        print(f"{UNI_ERR} Failed to install: {sp.stderr}")
+        return False, sp.stderr
 
 def check_install():
     print(f"Checking {APP_NAME} installation...")
-    cmd = [f"sudo {INSTALL_DIR}/{APP_NAME} version --short"]
-    sp = subprocess.run(cmd, shell=True)
+    cmd = [f"{INSTALL_DIR}/{APP_NAME} version --short"]
+    sp = subprocess.run(cmd, shell=True, capture_output=True)
     #TODO:clean output, verify return code
     if sp.returncode == 0:
-        app_version = sp.stdout
-        print(f"{UNI_OUT}  {APP_NAME} verison: {app_version}")
+        app_version = sp.stdout.decode()
+        print(f"{UNI_OUT} {APP_NAME} version: {app_version}")
         return sp.stdout
     else:
         err = sp.stderr
@@ -69,7 +73,7 @@ if __name__ == "__main__":
     #create_install_dir(f"{INSTALL_DIR}/{APP_NAME}")
     #print(download_minikube())
     install_minikube()
-    #check_install()
+    check_install()
 
 #check if minikube is up to date/latest version
 # specify version?
