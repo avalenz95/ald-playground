@@ -16,7 +16,6 @@ UNI_OUT = "\033[92m\u2714\033[0m"
 def download_minikube():
     # TODO: look into subprocess/curl functionality. this fails to error when passed with invalid data
     # TODO: address case where bin dir doesn't exist
-     
     cmd = [f"sudo curl --output-dir {INSTALL_DIR} -LO https://storage.googleapis.com/minikube/releases/{VERSION}/{APP_NAME}-{OS_TYPE}-{ARCH_TYPE}"]
     sp = subprocess.run(cmd, shell=True)
     print(cmd)
@@ -26,21 +25,7 @@ def download_minikube():
     else:
         print(f"{UNI_ERR} error pulling binary: {sp.stderr}")
         return False, sp.stderr
-
-# def create_install_dir(directory):
-#     try:
-#         os.makedirs(directory)
-#         print(f"{UNI_OUT} directory created at {directory}")
-#         return True, None
-    
-#     except FileExistsError as err:
-#         print(f"directory already exists at {directory} procceeding...")
-#         return True, err.strerror
-    
-#     except OSError as err:
-#         print(f"{UNI_ERR} failed creating directory at {directory} error: {err.strerror}")
-#         return False, err.strerror
-    
+   
 def install_minikube():
     print(f"Installing {APP_NAME}...")
     cmd = [f"sudo install {INSTALL_DIR}/{APP_NAME}-{OS_TYPE}-{ARCH_TYPE} {INSTALL_DIR}/{APP_NAME}"]
@@ -61,22 +46,16 @@ def check_install():
     if sp.returncode == 0:
         app_version = sp.stdout.decode()
         print(f"{UNI_OUT} {APP_NAME} version: {app_version}")
-        return sp.stdout
+        return True, sp.stdout
     else:
         err = sp.stderr
         print(f"{UNI_ERR}  {err}")
-        return err
+        return False, err
 
 
 
 if __name__ == "__main__":
-    #create_install_dir(f"{INSTALL_DIR}/{APP_NAME}")
-    #print(download_minikube())
+    #TODO: Chain logic, refactor functions
+    download_minikube()
     install_minikube()
     check_install()
-
-#check if minikube is up to date/latest version
-# specify version?
-
-    #install/update to latest version/specified
-    # checkplatform?
